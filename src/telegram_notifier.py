@@ -1,5 +1,6 @@
 from aiogram import Bot
 from loguru import logger
+import html
 
 from src.constants import MESSAGE_TEMPLATE
 
@@ -18,6 +19,8 @@ async def send_orders(bot: Bot, chat_id: int | str, orders: list[dict]) -> None:
         max_price: str = order.get('possiblePriceLimit', "unknown")
 
         description: str = order.get("description", "")
+        # Очистка html-сущностей
+        description = html.unescape(description)
 
         text: str = MESSAGE_TEMPLATE.format(
             title=title_with_url,
