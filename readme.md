@@ -26,8 +26,6 @@ cp .env.example .env
 python main.py
 ```
 
-Настройки парсинга можно изменить в файле `config.py`.
-
 ## Требования
 
 - Python 3.8+
