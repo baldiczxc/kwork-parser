@@ -1,4 +1,4 @@
-KWORK_URL = "https://kwork.ru/projects"
+KWORK_URL = "https://kwork.ru/projects?view=0"
 
 HEADERS = {
     'sec-ch-ua-platform': '"macOS"',
