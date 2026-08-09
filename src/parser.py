@@ -28,7 +28,7 @@ async def fetch_new_orders(
             url=KWORK_URL,
             data=form,
             headers=HEADERS,
-            timeout=5,
+            timeout=aiohttp.ClientTimeout(total=30),
     ) as response:
         response.raise_for_status()
         data = await response.json(loads=orjson.loads)

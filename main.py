@@ -2,7 +2,6 @@ import asyncio
 
 import aiohttp
 from aiogram import Bot
-from aiogram.client.session.aiohttp import AiohttpSession
 from loguru import logger
 
 from config import (
@@ -15,12 +14,7 @@ from src.parser import fetch_new_orders
 from src.telegram_notifier import send_orders
 
 
-# Прокси только для Telegram
-PROXY_URL = "socks5://127.0.0.1:1080"
-
-
 async def fetch_worker(bot: Bot, category_id: str) -> None:
-    # Обычная сессия без прокси для Kwork
     async with aiohttp.ClientSession() as session:
         while True:
             try:
@@ -35,6 +29,11 @@ async def fetch_worker(bot: Bot, category_id: str) -> None:
                         chat_id=TELEGRAM_CHAT_ID,
                         orders=orders,
                     )
+
+            except asyncio.TimeoutError:
+                logger.warning(
+                    f"Таймаут при проверке заказов {category_id=}, повтор через {POLL_INTERVAL_SECONDS}с"
+                )
 
             except Exception:
                 logger.exception(
@@ -51,11 +50,7 @@ async def runner() -> None:
 
     logger.info("Создаем Telegram Bot...")
 
-    bot_session = AiohttpSession(proxy=PROXY_URL)
-    bot = Bot(
-        token=TELEGRAM_BOT_TOKEN,
-        session=bot_session,
-    )
+    bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
     try:
         tasks = [
